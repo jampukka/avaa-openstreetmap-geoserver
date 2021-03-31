@@ -115,7 +115,7 @@
               <ExternalGraphic>
                 <OnlineResource
                                 xlink:type="simple"
-                                xlink:href="file:/data/osm/symbols/school.png" />
+                                xlink:href="symbols/school.png" />
                 <Format>image/png</Format>
               </ExternalGraphic>
               <Size>15</Size>
@@ -171,7 +171,7 @@
               <ExternalGraphic>
                 <OnlineResource
                                 xlink:type="simple"
-                                xlink:href="file:/data/osm/symbols/bus_station.n.16.png" />
+                                xlink:href="symbols/bus_station.n.16.png" />
                 <Format>image/png</Format>
               </ExternalGraphic>
               <Size>15</Size>
@@ -225,7 +225,7 @@
               <ExternalGraphic>
                 <OnlineResource
                                 xlink:type="simple"
-                                xlink:href="file:/data/osm/symbols/bus_station.n.16.png" />
+                                xlink:href="symbols/bus_station.n.16.png" />
                 <Format>image/png</Format>
               </ExternalGraphic>
               <Size>15</Size>
@@ -281,7 +281,7 @@
               <ExternalGraphic>
                 <OnlineResource
                                 xlink:type="simple"
-                                xlink:href="file:/data/osm/symbols/hospital.png" />
+                                xlink:href="symbols/hospital.png" />
                 <Format>image/png</Format>
               </ExternalGraphic>
               <Size>15</Size>
@@ -303,7 +303,7 @@
               <ExternalGraphic>
                 <OnlineResource
                                 xlink:type="simple"
-                                xlink:href="file:/data/osm/symbols/hospital.png" />
+                                xlink:href="symbols/hospital.png" />
                 <Format>image/png</Format>
               </ExternalGraphic>
               <Size>15</Size>
@@ -358,7 +358,7 @@
               <ExternalGraphic>
                 <OnlineResource
                                 xlink:type="simple"
-                                xlink:href="file:/data/osm/symbols/tower.png" />
+                                xlink:href="symbols/tower.png" />
                 <Format>image/png</Format>
               </ExternalGraphic>
               <Size>15</Size>
@@ -414,7 +414,7 @@
               <ExternalGraphic>
                 <OnlineResource
                                 xlink:type="simple"
-                                xlink:href="file:/data/osm/symbols/place_of_worship.png" />
+                                xlink:href="symbols/place_of_worship.png" />
                 <Format>image/png</Format>
               </ExternalGraphic>
               <Size>15</Size>
@@ -626,7 +626,7 @@
               <ExternalGraphic>
                 <OnlineResource
                                 xlink:type="simple"
-                                xlink:href="file:/data/osm/symbols/memorial.png" />
+                                xlink:href="symbols/memorial.png" />
                 <Format>image/png</Format>
               </ExternalGraphic>
               <Size>15</Size>
