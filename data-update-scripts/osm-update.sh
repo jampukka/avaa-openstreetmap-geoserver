@@ -8,11 +8,25 @@
 #
 # Tässä on menossa ko. paivitysajo, jossa
 #  - haetaan uusi suomen OSM aineisto palvelimelta download.geofabrik.de
-#  - viedään se PostGIS kantaan osm_finland EPSG:3067 koordinaattijärjestelmässä
+#  - viedään se PostGIS kantaan osm_finland $SRID_DST koordinaattijärjestelmässä
 #  - päitetään geoserver:in wms-cache aineiston osalta
 #
 # Seuraavassa vähän tietoa päivitysajon kulusta.  
 #EOF
+
+DB_HOST="localhost"
+DB_PORT=5432
+DB_USER=<db user>
+DB_DATABASE=osm_finland
+DB_SCHEMA=public
+
+SRID_SRC=4326
+SRID_DST=3879
+
+X_MIN=25472000
+X_MAX=25515000
+Y_MIN=6655000
+Y_MAX=6699000
 
 echo -e "\nosm-update alkoi:" $(date)
 
@@ -36,137 +50,137 @@ unzip -qq finland-latest-free.shp.zip
 
 # renaming files
 # (Geofabrik renamed the files at some point.)
-mv gis.osm_buildings_a_free_1.cpg buildings.cpg
-mv gis.osm_buildings_a_free_1.dbf buildings.dbf
-mv gis.osm_buildings_a_free_1.prj buildings.prj
-mv gis.osm_buildings_a_free_1.shp buildings.shp
-mv gis.osm_buildings_a_free_1.shx buildings.shx
+mv gis_osm_buildings_a_free_1.cpg buildings.cpg
+mv gis_osm_buildings_a_free_1.dbf buildings.dbf
+mv gis_osm_buildings_a_free_1.prj buildings.prj
+mv gis_osm_buildings_a_free_1.shp buildings.shp
+mv gis_osm_buildings_a_free_1.shx buildings.shx
 
-mv gis.osm_landuse_a_free_1.cpg landuse.cpg
-mv gis.osm_landuse_a_free_1.dbf landuse.dbf
-mv gis.osm_landuse_a_free_1.prj landuse.prj
-mv gis.osm_landuse_a_free_1.shp landuse.shp
-mv gis.osm_landuse_a_free_1.shx landuse.shx
+mv gis_osm_landuse_a_free_1.cpg landuse.cpg
+mv gis_osm_landuse_a_free_1.dbf landuse.dbf
+mv gis_osm_landuse_a_free_1.prj landuse.prj
+mv gis_osm_landuse_a_free_1.shp landuse.shp
+mv gis_osm_landuse_a_free_1.shx landuse.shx
 
 #Natural: tree, beach, cave, cliff, peak, spring. Not used now.
-#mv gis.osm_natural_a_free_1.cpg natural.cpg
-#mv gis.osm_natural_a_free_1.dbf natural.dbf
-#mv gis.osm_natural_a_free_1.prj natural.prj
-#mv gis.osm_natural_a_free_1.shp natural.shp
-#mv gis.osm_natural_a_free_1.shx natural.shx
-#mv gis.osm_natural_free_1.cpg natural.cpg
-#mv gis.osm_natural_free_1.dbf natural.dbf
-#mv gis.osm_natural_free_1.prj natural.prj
-#mv gis.osm_natural_free_1.shp natural.shp
-#mv gis.osm_natural_free_1.shx natural.shx
-rm gis.osm_natural*
+#mv gis_osm_natural_a_free_1.cpg natural.cpg
+#mv gis_osm_natural_a_free_1.dbf natural.dbf
+#mv gis_osm_natural_a_free_1.prj natural.prj
+#mv gis_osm_natural_a_free_1.shp natural.shp
+#mv gis_osm_natural_a_free_1.shx natural.shx
+#mv gis_osm_natural_free_1.cpg natural.cpg
+#mv gis_osm_natural_free_1.dbf natural.dbf
+#mv gis_osm_natural_free_1.prj natural.prj
+#mv gis_osm_natural_free_1.shp natural.shp
+#mv gis_osm_natural_free_1.shx natural.shx
+rm gis_osm_natural*
 
 #Places_a: islands, farms, etc, Not used now.
-#mv gis.osm_places_a_free_1.cpg places_a.cpg
-#mv gis.osm_places_a_free_1.dbf places_a.dbf
-#mv gis.osm_places_a_free_1.prj places_a.prj
-#mv gis.osm_places_a_free_1.shp places_a.shp
-#mv gis.osm_places_a_free_1.shx places_a.shx
-rm gis.osm_places_a*
+#mv gis_osm_places_a_free_1.cpg places_a.cpg
+#mv gis_osm_places_a_free_1.dbf places_a.dbf
+#mv gis_osm_places_a_free_1.prj places_a.prj
+#mv gis_osm_places_a_free_1.shp places_a.shp
+#mv gis_osm_places_a_free_1.shx places_a.shx
+rm gis_osm_places_a*
 
-mv gis.osm_places_free_1.cpg places.cpg
-mv gis.osm_places_free_1.dbf places.dbf
-mv gis.osm_places_free_1.prj places.prj
-mv gis.osm_places_free_1.shp places.shp
-mv gis.osm_places_free_1.shx places.shx
+mv gis_osm_places_free_1.cpg places.cpg
+mv gis_osm_places_free_1.dbf places.dbf
+mv gis_osm_places_free_1.prj places.prj
+mv gis_osm_places_free_1.shp places.shp
+mv gis_osm_places_free_1.shx places.shx
 
-mv gis.osm_pofw_a_free_1.cpg pofw_a.cpg
-mv gis.osm_pofw_a_free_1.dbf pofw_a.dbf
-mv gis.osm_pofw_a_free_1.prj pofw_a.prj
-mv gis.osm_pofw_a_free_1.shp pofw_a.shp
-mv gis.osm_pofw_a_free_1.shx pofw_a.shx
+mv gis_osm_pofw_a_free_1.cpg pofw_a.cpg
+mv gis_osm_pofw_a_free_1.dbf pofw_a.dbf
+mv gis_osm_pofw_a_free_1.prj pofw_a.prj
+mv gis_osm_pofw_a_free_1.shp pofw_a.shp
+mv gis_osm_pofw_a_free_1.shx pofw_a.shx
 
-mv gis.osm_pofw_free_1.cpg pofw.cpg
-mv gis.osm_pofw_free_1.dbf pofw.dbf
-mv gis.osm_pofw_free_1.prj pofw.prj
-mv gis.osm_pofw_free_1.shp pofw.shp
-mv gis.osm_pofw_free_1.shx pofw.shx
+mv gis_osm_pofw_free_1.cpg pofw.cpg
+mv gis_osm_pofw_free_1.dbf pofw.dbf
+mv gis_osm_pofw_free_1.prj pofw.prj
+mv gis_osm_pofw_free_1.shp pofw.shp
+mv gis_osm_pofw_free_1.shx pofw.shx
 
-mv gis.osm_pois_a_free_1.cpg points_a.cpg
-mv gis.osm_pois_a_free_1.dbf points_a.dbf
-mv gis.osm_pois_a_free_1.prj points_a.prj
-mv gis.osm_pois_a_free_1.shp points_a.shp
-mv gis.osm_pois_a_free_1.shx points_a.shx
+mv gis_osm_pois_a_free_1.cpg points_a.cpg
+mv gis_osm_pois_a_free_1.dbf points_a.dbf
+mv gis_osm_pois_a_free_1.prj points_a.prj
+mv gis_osm_pois_a_free_1.shp points_a.shp
+mv gis_osm_pois_a_free_1.shx points_a.shx
 
-mv gis.osm_pois_free_1.cpg points.cpg
-mv gis.osm_pois_free_1.dbf points.dbf
-mv gis.osm_pois_free_1.prj points.prj
-mv gis.osm_pois_free_1.shp points.shp
-mv gis.osm_pois_free_1.shx points.shx
+mv gis_osm_pois_free_1.cpg points.cpg
+mv gis_osm_pois_free_1.dbf points.dbf
+mv gis_osm_pois_free_1.prj points.prj
+mv gis_osm_pois_free_1.shp points.shp
+mv gis_osm_pois_free_1.shx points.shx
 
-mv gis.osm_railways_free_1.cpg railways.cpg
-mv gis.osm_railways_free_1.dbf railways.dbf
-mv gis.osm_railways_free_1.prj railways.prj
-mv gis.osm_railways_free_1.shp railways.shp
-mv gis.osm_railways_free_1.shx railways.shx
+mv gis_osm_railways_free_1.cpg railways.cpg
+mv gis_osm_railways_free_1.dbf railways.dbf
+mv gis_osm_railways_free_1.prj railways.prj
+mv gis_osm_railways_free_1.shp railways.shp
+mv gis_osm_railways_free_1.shx railways.shx
 
-mv gis.osm_roads_free_1.cpg roads.cpg
-mv gis.osm_roads_free_1.dbf roads.dbf
-mv gis.osm_roads_free_1.prj roads.prj
-mv gis.osm_roads_free_1.shp roads.shp
-mv gis.osm_roads_free_1.shx roads.shx
+mv gis_osm_roads_free_1.cpg roads.cpg
+mv gis_osm_roads_free_1.dbf roads.dbf
+mv gis_osm_roads_free_1.prj roads.prj
+mv gis_osm_roads_free_1.shp roads.shp
+mv gis_osm_roads_free_1.shx roads.shx
 
-mv gis.osm_traffic_a_free_1.cpg traffic_a.cpg
-mv gis.osm_traffic_a_free_1.dbf traffic_a.dbf
-mv gis.osm_traffic_a_free_1.prj traffic_a.prj
-mv gis.osm_traffic_a_free_1.shp traffic_a.shp
-mv gis.osm_traffic_a_free_1.shx traffic_a.shx
-mv gis.osm_traffic_free_1.cpg traffic.cpg
-mv gis.osm_traffic_free_1.dbf traffic.dbf
-mv gis.osm_traffic_free_1.prj traffic.prj
-mv gis.osm_traffic_free_1.shp traffic.shp
-mv gis.osm_traffic_free_1.shx traffic.shx
+mv gis_osm_traffic_a_free_1.cpg traffic_a.cpg
+mv gis_osm_traffic_a_free_1.dbf traffic_a.dbf
+mv gis_osm_traffic_a_free_1.prj traffic_a.prj
+mv gis_osm_traffic_a_free_1.shp traffic_a.shp
+mv gis_osm_traffic_a_free_1.shx traffic_a.shx
+mv gis_osm_traffic_free_1.cpg traffic.cpg
+mv gis_osm_traffic_free_1.dbf traffic.dbf
+mv gis_osm_traffic_free_1.prj traffic.prj
+mv gis_osm_traffic_free_1.shp traffic.shp
+mv gis_osm_traffic_free_1.shx traffic.shx
 
-mv gis.osm_transport_a_free_1.cpg transport_a.cpg
-mv gis.osm_transport_a_free_1.dbf transport_a.dbf
-mv gis.osm_transport_a_free_1.prj transport_a.prj
-mv gis.osm_transport_a_free_1.shp transport_a.shp
-mv gis.osm_transport_a_free_1.shx transport_a.shx
-mv gis.osm_transport_free_1.cpg transport.cpg
-mv gis.osm_transport_free_1.dbf transport.dbf
-mv gis.osm_transport_free_1.prj transport.prj
-mv gis.osm_transport_free_1.shp transport.shp
-mv gis.osm_transport_free_1.shx transport.shx
+mv gis_osm_transport_a_free_1.cpg transport_a.cpg
+mv gis_osm_transport_a_free_1.dbf transport_a.dbf
+mv gis_osm_transport_a_free_1.prj transport_a.prj
+mv gis_osm_transport_a_free_1.shp transport_a.shp
+mv gis_osm_transport_a_free_1.shx transport_a.shx
+mv gis_osm_transport_free_1.cpg transport.cpg
+mv gis_osm_transport_free_1.dbf transport.dbf
+mv gis_osm_transport_free_1.prj transport.prj
+mv gis_osm_transport_free_1.shp transport.shp
+mv gis_osm_transport_free_1.shx transport.shx
 
 #Not used.
-#mv gis.osm_water_a_free_1.cpg water.cpg
-#mv gis.osm_water_a_free_1.dbf water.dbf
-#mv gis.osm_water_a_free_1.prj water.prj
-#mv gis.osm_water_a_free_1.shp water.shp
-#mv gis.osm_water_a_free_1.shx water.shx
-rm gis.osm_water_a*
+#mv gis_osm_water_a_free_1.cpg water.cpg
+#mv gis_osm_water_a_free_1.dbf water.dbf
+#mv gis_osm_water_a_free_1.prj water.prj
+#mv gis_osm_water_a_free_1.shp water.shp
+#mv gis_osm_water_a_free_1.shx water.shx
+rm gis_osm_water_a*
 
-mv gis.osm_waterways_free_1.cpg waterways.cpg
-mv gis.osm_waterways_free_1.dbf waterways.dbf
-mv gis.osm_waterways_free_1.prj waterways.prj
-mv gis.osm_waterways_free_1.shp waterways.shp
-mv gis.osm_waterways_free_1.shx waterways.shx
+mv gis_osm_waterways_free_1.cpg waterways.cpg
+mv gis_osm_waterways_free_1.dbf waterways.dbf
+mv gis_osm_waterways_free_1.prj waterways.prj
+mv gis_osm_waterways_free_1.shp waterways.shp
+mv gis_osm_waterways_free_1.shx waterways.shx
 
 echo 'rename'
 # rename fclass column to type (all layers except buildings)
-ogrinfo buildings.shp -sql "alter table buildings rename column fclass to type" 
-ogrinfo landuse.shp -sql "alter table landuse rename column fclass to type" 
-#ogrinfo natural_a.shp -sql "alter table natural_a rename column fclass to type" 
-#ogrinfo natural.shp -sql "alter table natural rename column fclass to type" 
-ogrinfo places.shp -sql "alter table places rename column fclass to type" S
-#ogrinfo places_a.shp -sql "alter table places_a rename column fclass to type" 
-ogrinfo pofw.shp -sql "alter table pofw rename column fclass to type" 
-ogrinfo pofw_a.shp -sql "alter table pofw_a rename column fclass to type" 
-ogrinfo points.shp -sql "alter table points rename column fclass to type" 
-ogrinfo points_a.shp -sql "alter table points_a rename column fclass to type" 
-ogrinfo railways.shp -sql "alter table railways rename column fclass to type" 
-ogrinfo roads.shp -sql "alter table roads rename column fclass to type" 
-ogrinfo traffic.shp -sql "alter table traffic rename column fclass to type" 
-ogrinfo traffic_a.shp -sql "alter table traffic_a rename column fclass to type" 
-ogrinfo transport.shp -sql "alter table transport rename column fclass to type" 
-ogrinfo transport_a.shp -sql "alter table transport_a rename column fclass to type" 
-#ogrinfo water.shp -sql "alter table water rename column fclass to type" 
-ogrinfo waterways.shp -sql "alter table waterways rename column fclass to type"
+ogrinfo buildings.shp -q -sql "alter table buildings rename column fclass to type"
+ogrinfo landuse.shp -q -sql "alter table landuse rename column fclass to type"
+#ogrinfo natural_a.shp -q -sql "alter table natural_a rename column fclass to type"
+#ogrinfo natural.shp -q -sql "alter table natural rename column fclass to type"
+ogrinfo places.shp -q -sql "alter table places rename column fclass to type"
+#ogrinfo places_a.shp -q -sql "alter table places_a rename column fclass to type"
+ogrinfo pofw.shp -q -sql "alter table pofw rename column fclass to type"
+ogrinfo pofw_a.shp -q -sql "alter table pofw_a rename column fclass to type"
+ogrinfo points.shp -q -sql "alter table points rename column fclass to type"
+ogrinfo points_a.shp -q -sql "alter table points_a rename column fclass to type"
+ogrinfo railways.shp -q -sql "alter table railways rename column fclass to type"
+ogrinfo roads.shp -q -sql "alter table roads rename column fclass to type"
+ogrinfo traffic.shp -q -sql "alter table traffic rename column fclass to type"
+ogrinfo traffic_a.shp -q -sql "alter table traffic_a rename column fclass to type"
+ogrinfo transport.shp -q -sql "alter table transport rename column fclass to type"
+ogrinfo transport_a.shp -q -sql "alter table transport_a rename column fclass to type"
+#ogrinfo water.shp -q -sql "alter table water rename column fclass to type"
+ogrinfo waterways.shp -q -sql "alter table waterways rename column fclass to type"
 
 # TRANSPORT
 echo 'transport'
@@ -182,8 +196,8 @@ ogr2ogr -f "ESRI Shapefile" -append -update -where "type='fuel'" points_a.shp tr
 # POFW
 echo 'powf'
 # change type to 'place_of_worship'
-ogrinfo pofw.shp -dialect SQLITE -sql "update pofw set type='place_of_worship'"
-ogrinfo pofw_a.shp -dialect SQLITE -sql "update pofw_a set type='place_of_worship'"
+ogrinfo pofw.shp -dialect SQLITE -q -sql "update pofw set type='place_of_worship'"
+ogrinfo pofw_a.shp -dialect SQLITE -q -sql "update pofw_a set type='place_of_worship'"
 
 # copy elements to pois layer 
 ogr2ogr -f "ESRI Shapefile" -append -update points.shp pofw.shp
@@ -209,20 +223,48 @@ for f in *.shp
 do 
  echo -e "\n---" $f
  fshort=$(basename $f .shp)
- shp2pgsql -d -I -s 4326:3067 $f osm.$fshort | ~/psql -q -h <db_server_name> -p 5520 -U <db_user_name> -d osm_finland 1>/dev/null
+ shp2pgsql -d -D -I -s $SRID_SRC:$SRID_DST $f $DB_SCHEMA.$fshort | psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE 1>/dev/null
 done 
+
+# Remove features outside of bbox
+echo -e "\n*** Poistetaan PKS ulkopuoliset"
+
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM buildings WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM lakes WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM landuse WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM places WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM points WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM points_a WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM protected WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM railways WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM roads WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM waterways WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "DELETE FROM municipalities WHERE NOT ST_Intersects(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879));"
+
+# Clip polygon features with bbox (except for municipalities)
+echo -e "\n*** Leikataan PKS ulkopuoliset"
+
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "UPDATE buildings SET geom = ST_Multi(ST_ClipByBox2D(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879)));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "UPDATE lakes SET geom = ST_Multi(ST_ClipByBox2D(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879)));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "UPDATE landuse SET geom = ST_Multi(ST_ClipByBox2D(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879)));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "UPDATE points_a SET geom = ST_Multi(ST_ClipByBox2D(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879)));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "UPDATE protected SET geom = ST_Multi(ST_ClipByBox2D(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879)));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "UPDATE railways SET geom = ST_Multi(ST_ClipByBox2D(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879)));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "UPDATE roads SET geom = ST_Multi(ST_ClipByBox2D(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879)));"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "UPDATE waterways SET geom = ST_Multi(ST_ClipByBox2D(geom, ST_MakeEnvelope($X_MIN,$Y_MIN,$X_MAX, $Y_MAX, 3879)));"
+
 
 echo -e "\n*** Generoidaan indexit"
 
-~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON roads (type)"
-~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON landuse (type)"
-#~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON nature (type)"
-~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON points (type)"
-~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON points_a (type)"
-~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON places (type)"
-~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON places (population)"
-~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON railways (type)"
-~/psql -q -h <db_server_name> -p <db_port_number> -U <db_user_name> -d osm_finland -c "CREATE INDEX ON waterways (type)"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON roads (type)"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON landuse (type)"
+#psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON nature (type)"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON points (type)"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON points_a (type)"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON places (type)"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON places (population)"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON railways (type)"
+psql -q -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_DATABASE -c "CREATE INDEX ON waterways (type)"
 ### 6) Käynnistä tomcat/geoserver?  Katso yllä onko pysäytetty.
 
 ### 7) Päivitä geoserver:in cache
